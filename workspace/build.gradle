@@ -1,0 +1,78 @@
+buildscript {
+	ext {
+		globalEncoding = "UTF-8"
+
+		javaSourceCompatibility = JavaVersion.VERSION_1_8
+		javaTargetCompatibility = JavaVersion.VERSION_1_8
+
+		androidSourceCompatibility = JavaVersion.VERSION_1_8
+		androidTargetCompatibility = JavaVersion.VERSION_1_8
+
+		composeVersion = '1.2.0'
+
+		globalAndroidBuildToolsVersion = "32.0.0"
+		globalAndroidCompileSdkVersion = 32
+		globalAndroidTargetSdkVersion = 32
+	}
+}
+
+plugins {
+    id 'com.android.application' version '7.2.1' apply false
+    id 'com.android.library' version '7.2.1' apply false
+	id 'org.jetbrains.kotlin.android' version '1.7.0' apply false
+}
+
+allprojects {
+	buildDir = ".bin"
+}
+
+subprojects {
+	afterEvaluate {
+		boolean isAndroidProject = project.plugins.hasPlugin('android');
+		boolean isAndroidLibrary = project.plugins.hasPlugin('android-library');
+		boolean isJavaProject = project.plugins.hasPlugin('java')
+		boolean isJavaLibrary = project.plugins.hasPlugin('java-library')
+
+		if( isJavaProject || isJavaLibrary ) {
+			compileJava.options.encoding = globalEncoding
+		}
+		
+		if( isAndroidProject || isAndroidLibrary ) {
+			android {
+				compileOptions {
+					sourceCompatibility = androidSourceCompatibility
+					targetCompatibility = androidTargetCompatibility
+					encoding = globalEncoding
+				}
+
+				packagingOptions {
+					exclude '**.java'
+				}
+			}
+		}
+		
+		if( isAndroidProject ) {
+			android {
+				buildTypes {
+					debug {
+						minifyEnabled false
+						proguardFile getDefaultProguardFile('proguard-android.txt')
+						signingConfig signingConfigs.debug
+					}
+
+					release {
+						minifyEnabled true
+						shrinkResources true
+						proguardFile getDefaultProguardFile('proguard-android.txt')
+					}
+				}
+			}
+		}
+
+	}
+
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
