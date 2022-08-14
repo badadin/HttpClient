@@ -1,5 +1,8 @@
 package com.rinatvasilev.httpclient
 
+import java.lang.reflect.Proxy
+import kotlin.properties.Delegates
+
 class HttpClient private constructor(private val clientImpl: BaseHttpClient, private val baseUrl: String) {
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> create(cls: Class<T>): T {

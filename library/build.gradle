@@ -1,7 +1,9 @@
 apply plugin:'com.android.library'
+apply plugin: 'kotlin-android'
 
 dependencies {
-	// todo!!!
+	implementation 'androidx.core:core-ktx:1.8.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
 }
 
 android {
