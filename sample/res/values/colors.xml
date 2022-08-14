@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorStatusBarLight">#16A2C5</color>
+    <color name="colorStatusBarDark">#084D5E</color>
+    <color name="colorWhite">#FFFFFFFF</color>
+</resources>
