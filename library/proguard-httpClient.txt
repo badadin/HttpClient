@@ -1,0 +1,7 @@
+-keep public class com.rinatvasilev.httpclient.TODO1 { public <methods>; }
+-keep public class com.rinatvasilev.httpclient.TODO2 { *; }
+-keep public class com.rinatvasilev.httpclient.TODO3 { *; }
+-keep public class team.sls.mobilecard.storage.TODO3$TODOListener { *; }
+
+-repackageclasses com.rinatvasilev.httpclient.a
+-keepattributes InnerClasses
