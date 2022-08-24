@@ -3,13 +3,13 @@ package com.rinatvasilev.httpclient
 import java.lang.reflect.Proxy
 import kotlin.properties.Delegates
 
-class HttpClient private constructor(private val clientImpl: BaseHttpClient, private val baseUrl: String) {
+class HttpClient private constructor(private val clientImpl: BaseHttpClient) {
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> create(cls: Class<T>): T {
         return Proxy.newProxyInstance(
             cls.classLoader,
             arrayOf(cls),
-            HttpClientInvocationHandler(clientImpl = clientImpl, baseUrl = baseUrl)
+            HttpClientInvocationHandler(clientImpl = clientImpl)
         ) as T
     }
 
@@ -33,10 +33,7 @@ class HttpClient private constructor(private val clientImpl: BaseHttpClient, pri
         }
 
         fun build(): HttpClient {
-            return HttpClient(
-                clientImpl = if (clientImpl != null) clientImpl!! else BaseHttpClientImpl(baseUrl),
-                baseUrl = baseUrl
-            )
+            return HttpClient(clientImpl = if (clientImpl != null) clientImpl!! else BaseHttpClientImpl(baseUrl))
         }
     }
 }

@@ -3,10 +3,7 @@ package com.rinatvasilev.httpclient
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 
-class HttpClientInvocationHandler(
-    private val clientImpl: BaseHttpClient,
-    private val baseUrl: String
-) : InvocationHandler {
+class HttpClientInvocationHandler(private val clientImpl: BaseHttpClient) : InvocationHandler {
 
     // todo
     //  можно сделать фабрику для кэширования запросов, пример тут:
@@ -26,26 +23,8 @@ class HttpClientInvocationHandler(
             checkGet(method)
         }
 
-        val get = method.annotations.firstNotNullOf { it as? Get }
-        val request = get.value
-
-        if (method.parameterCount == 0) {
-            clientImpl.get(request)
-        } else {
-            checkNotNull(args)
-
-            val annotations = method.parameterAnnotations
-            val paramNames = annotations.map { params ->
-                params.firstNotNullOf { it as? Param }.value
-            }
-            val param = buildMap {
-                repeat(method.parameterCount) { index ->
-                    put(paramNames[index], args[index])
-                }
-            }
-
-            clientImpl.get(request, param)
-        }
+        val request = method.annotations.firstNotNullOf { it as? Get }.value
+        clientImpl.get(request, buildParams(method, args))
     }
 
     private fun invokePost(method: Method, args: Array<out Any>?) {
@@ -53,26 +32,23 @@ class HttpClientInvocationHandler(
             checkPost(method)
         }
 
-        val post = method.annotations.firstNotNullOf { it as? Post }
-        val request = post.value
+        val request = method.annotations.firstNotNullOf { it as? Post }.value
+        clientImpl.post(request, buildParams(method, args))
+    }
 
-        if (method.parameterCount == 0) {
-            clientImpl.post(request)
-        } else {
-            checkNotNull(args)
-
-            val annotations = method.parameterAnnotations
-            val paramNames = annotations.map { params ->
+    private fun buildParams(method: Method, args: Array<out Any>?): Map<String, Any>? {
+        var parameters: Map<String, Any>? = null
+        args?.let { arguments ->
+            val paramNames = method.parameterAnnotations.map { params ->
                 params.firstNotNullOf { it as? Param }.value
             }
-            val param = buildMap {
-                repeat(method.parameterCount) { index ->
+            parameters = buildMap {
+                repeat(arguments.size) { index ->
                     put(paramNames[index], args[index])
                 }
             }
-
-            clientImpl.post(request, param)
         }
+        return parameters
     }
 
     private fun checkPost(method: Method) {
@@ -80,8 +56,9 @@ class HttpClientInvocationHandler(
             "Function has no Post annotation"
         }
 
-        method.parameterAnnotations.forEach { paramAnnotaations ->
-            check(paramAnnotaations.any { it is Param }) {
+        // if any parameterAnnotation exists, it must be Param
+        method.parameterAnnotations.forEach { paramAnnotations ->
+            check(paramAnnotations.any { it is Param }) {
                 "Function Post has no Param annotation"
             }
         }
@@ -92,8 +69,9 @@ class HttpClientInvocationHandler(
             "Function has no Get annotation"
         }
 
-        method.parameterAnnotations.forEach { paramAnnotaations ->
-            check(paramAnnotaations.any { it is Param }) {
+        // if any parameterAnnotation exists, it must be Param
+        method.parameterAnnotations.forEach { paramAnnotations ->
+            check(paramAnnotations.any { it is Param }) {
                 "Function Get has no Param annotation"
             }
         }

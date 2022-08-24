@@ -15,7 +15,7 @@ class BaseHttpClientImpl(private val baseUrl: String) : BaseHttpClient {
     private val httpClient = HttpClient()
 
     override fun get(request: String, params: Map<String, Any>?): HttpResponse {
-        Log.d("abcd", "get: $request, params: $params")
+        Log.d("HttpClient", "get: $request, params: $params")
 
         val paramList = Array<Array<String>>(params?.entries?.size ?: 0) { Array(2) { "" } }
         params?.let {
@@ -24,9 +24,9 @@ class BaseHttpClientImpl(private val baseUrl: String) : BaseHttpClient {
             }
         }
 
-        Log.d("abcd", "paramList:")
+        Log.d("HttpClient", "paramList:")
         paramList.forEach {
-            Log.d("abcd", "${it[0]} and ${it[1]}")
+            Log.d("HttpClient", "${it[0]} and ${it[1]}")
         }
 
         val queryURL = formQueryUrl(request, queryParams = paramList.map { it }.toTypedArray())
@@ -36,7 +36,7 @@ class BaseHttpClientImpl(private val baseUrl: String) : BaseHttpClient {
     }
 
     override fun post(request: String, params: Map<String, Any>?): HttpResponse {
-        Log.d("abcd", "post: $request, params: $params")
+        Log.d("HttpClient", "post: $request, params: $params")
 
         val jsonRequest = JSONObject()
         params?.let {
@@ -44,7 +44,7 @@ class BaseHttpClientImpl(private val baseUrl: String) : BaseHttpClient {
                 jsonRequest.put(param.key, param.value)
             }
         }
-        Log.d("abcd", "jsonRequest: $jsonRequest")
+        Log.d("HttpClient", "jsonRequest: $jsonRequest")
 
         val httpRequest = HttpRequest("$baseUrl/$request", "POST")
         httpRequest.setBody(jsonRequest)
