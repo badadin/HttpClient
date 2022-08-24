@@ -34,7 +34,7 @@ class HttpClient private constructor(private val clientImpl: BaseHttpClient, pri
 
         fun build(): HttpClient {
             return HttpClient(
-                clientImpl = if (clientImpl != null) clientImpl!! else BaseHttpClientImpl(),
+                clientImpl = if (clientImpl != null) clientImpl!! else BaseHttpClientImpl(baseUrl),
                 baseUrl = baseUrl
             )
         }
