@@ -11,8 +11,8 @@ class HttpClientInvocationHandler(private val clientImpl: BaseHttpClient) : Invo
 
     override fun invoke(proxy: Any, method: Method, args: Array<out Any>?): Any {
         when (method.annotations.firstOrNull()) {
-            is Post -> invokePost(method, args)
             is Get -> invokeGet(method, args)
+            is Post -> invokePost(method, args)
             else -> throw IllegalStateException("Unknown annotation")
         }
         return Unit

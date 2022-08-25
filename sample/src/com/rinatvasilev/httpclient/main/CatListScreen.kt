@@ -4,12 +4,10 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.*
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.res.stringResource
@@ -20,15 +18,16 @@ import com.rinatvasilev.httpclient.*
 import com.rinatvasilev.httpclient.R
 import com.rinatvasilev.httpclient.ui.*
 import com.rinatvasilev.httpclient.ui.theme.*
+import java.lang.ref.WeakReference
 
 @Composable
-fun MainScreen(
+fun CatListScreen(
     app: App,
     navController: NavController,
     activityContext: Context,
     isDarkTheme: Boolean = isSystemInDarkTheme()
 ) {
-    //todo vm
+    val vm = remember { CatListViewModel(app = app, activityContext = WeakReference(activityContext)) }
 
     val backToExit = remember { mutableStateOf(false) }
     val tapToExitText = stringResource(R.string.tapToExit)
@@ -43,15 +42,21 @@ fun MainScreen(
         }
     })
 
+    LaunchedEffect(true) {
+        vm.getCats()
+    }
+
     MainScreenUi(
-        onPersonalizeClicked = { navController.navigate(Screens.DETAILS.name) },
+        catList = vm.catList,
+        onCatClicked = { navController.navigate(Screens.DETAILS.name) },
         isDarkTheme = isDarkTheme
     )
 }
 
 @Composable
 private fun MainScreenUi(
-    onPersonalizeClicked: () -> Unit,
+    catList: List<CatInfo>,
+    onCatClicked: (String) -> Unit,
     isDarkTheme: Boolean
 ) {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
@@ -64,32 +69,12 @@ private fun MainScreenUi(
                 isDarkTheme = isDarkTheme
             )
 
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .height(48.dp),
-                onClick = { onPersonalizeClicked() },
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = colorAccent,
-                    contentColor = colorLight
-                ),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text(text = stringResource(R.string.appName), fontSize = 18.sp)
-            }
-
-            OutlinedButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 32.dp, start = 16.dp, end = 16.dp)
-                    .height(48.dp),
-                onClick = { /*TODO*/ },
-                shape = RoundedCornerShape(16.dp),
-                border = BorderStroke(width = 2.dp, color = colorRed),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = colorRed)
-            ) {
-                Text(text = stringResource(R.string.appName), fontSize = 18.sp)
+            LazyColumn {
+                items(catList) {
+                    MainListItem(catInfo = it, onItemClicked = { id ->
+                        onCatClicked(id)
+                    })
+                }
             }
         }
     }
@@ -109,7 +94,8 @@ private fun MainScreenUi(
 private fun LoginScreenPreview() {
     HttpClientTheme {
         MainScreenUi(
-            onPersonalizeClicked = {},
+            catList = arrayListOf(),
+            onCatClicked = {},
             isDarkTheme = isSystemInDarkTheme()
         )
     }

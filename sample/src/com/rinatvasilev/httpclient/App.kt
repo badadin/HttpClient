@@ -2,53 +2,26 @@ package com.rinatvasilev.httpclient
 
 import android.app.Application
 import android.util.Log
+import org.json.JSONObject
 
 class App : Application() {
+
+    companion object {
+        const val BASE_URL = "https://cataas.com"
+    }
+
+    var catService: CatService? = null
 
     override fun onCreate() {
         super.onCreate()
 
         val httpClient = HttpClient.Builder()
-            .baseUrl("https://cataas.com")
+            .baseUrl(BASE_URL)
             .build()
 
-        val httpClientInterfaceImpl: SomeService = httpClient.create()
-
-        Thread {
-            try {
-                httpClientInterfaceImpl.getRandomCuteCatWithGet(id = 123, name = "Cat")
-            } catch (ex: Throwable) {
-                Log.e("abcd", ex.toString())
-            }
-
-            try {
-                httpClientInterfaceImpl.getRandomCuteCatWithPost(id = 123)
-            } catch (ex: Throwable) {
-                Log.e("abcd", ex.toString())
-            }
-
-            try {
-                httpClientInterfaceImpl.getRandomCuteCatWithGetNoParams()
-            } catch (ex: Throwable) {
-                Log.e("abcd", ex.toString())
-            }
-
-        }.start()
+        catService = httpClient.create()
 
         //todo init keystore
-
-        // https://cataas.com/cat?json=true
-        /*
-        {
-           "id":"6167c4e8412a9f0018729ee0",
-           "created_at":"2021-10-14T05:49:28.073Z",
-           "tags":[
-              "cat",
-              "orange"
-           ],
-           "url":"/cat/6167c4e8412a9f0018729ee0"
-        }
-        */
 
         // https://cataas.com/cat?id=595f280c557291a9750ebf80
         // конкретная картинка с кошаком
@@ -85,7 +58,7 @@ class App : Application() {
     }
 }
 
-interface SomeService {
+interface CatService {
     @Post("cat/cute")
     fun getRandomCuteCatWithPost(@Param("id") id: Long)
 
@@ -94,4 +67,7 @@ interface SomeService {
 
     @Get("cat/cute")
     fun getRandomCuteCatWithGetNoParams()
+
+    @Get("api/cats")
+    fun getCuteCats(@Param("tags") tags: String, @Param("limit") limit: Int): HttpClientResponse
 }

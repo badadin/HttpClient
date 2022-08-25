@@ -1,5 +1,5 @@
 <resources>
-    <string name="appName">Http Client</string>
+    <string name="appName">Http Client Demo</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="ok">OK</string>

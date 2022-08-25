@@ -20,7 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.rinatvasilev.httpclient.details.DetailsScreen
-import com.rinatvasilev.httpclient.main.MainScreen
+import com.rinatvasilev.httpclient.main.CatListScreen
 import com.rinatvasilev.httpclient.ui.theme.HttpClientTheme
 
 class MainActivity : ComponentActivity() {
@@ -52,7 +52,7 @@ private fun Navigation(app: App, activityContext: Context) {
             NavHost(navController = navController, startDestination = Screens.MAIN.name) {
 
                 composable(Screens.MAIN.name) {
-                    MainScreen(
+                    CatListScreen(
                         app = app,
                         navController = navController,
                         activityContext = activityContext
