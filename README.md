@@ -1,4 +1,4 @@
-### Simple Retrofit-like HTTP client
+### Simple Retrofit-like HTTP library
 Based on Java Dynamic Proxy <br/>
 Written in educational purposes only <br/>
 Using [Denom common library](https://github.com/Digrol/Denom/blob/master/libs/org.denom.common-2021.02.12.jar) for networking
