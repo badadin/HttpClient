@@ -22,6 +22,9 @@ val colorDisabledDark = Color(0xFF676767)
 val colorUrlTextLight = Color(0xFF3446F0)
 val colorUrlTextDark = Color(0xFF597FF1)
 
+val colorChipLight = Color(0xFFA4B4E2)
+val colorChipDark = Color(0xFF5C67D1)
+
 val colorGrayDivider = Color(0x80929292)
 
 val colorRed = Color(0xFFFA4646)

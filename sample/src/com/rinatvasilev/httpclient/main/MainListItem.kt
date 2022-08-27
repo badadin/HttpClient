@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -17,10 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import com.rinatvasilev.httpclient.App
-import com.rinatvasilev.httpclient.ui.theme.colorControlDark
-import com.rinatvasilev.httpclient.ui.theme.colorControlLight
-import com.rinatvasilev.httpclient.ui.theme.colorMainTextDark
-import com.rinatvasilev.httpclient.ui.theme.colorMainTextLight
+import com.rinatvasilev.httpclient.ui.theme.*
 
 @Composable
 fun MainListItem(
@@ -30,6 +29,7 @@ fun MainListItem(
 ) {
     Row(
         modifier = Modifier
+            .fillMaxWidth()
             .height(150.dp)
             .padding(start = 16.dp, end = 16.dp, top = 16.dp)
             .clip(RoundedCornerShape(16.dp))
@@ -55,21 +55,23 @@ fun MainListItem(
             contentDescription = null
         )
 
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "TEST",
-                fontSize = 20.sp,
-                color = if (isDarkTheme) colorMainTextDark else colorMainTextLight
-            )
-            Text(
-                text = "Test",
-                fontSize = 14.sp,
-                color = if (isDarkTheme) colorMainTextDark else colorMainTextLight
-            )
+        LazyRow {
+            items(catInfo.tags) { item ->
+                Box(
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .height(36.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(color = if (isDarkTheme) colorChipDark else colorChipLight)
+                        .padding(start = 8.dp, end = 8.dp), contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = item,
+                        fontSize = 18.sp,
+                        color = if (isDarkTheme) colorMainTextDark else colorMainTextLight
+                    )
+                }
+            }
         }
     }
 }
