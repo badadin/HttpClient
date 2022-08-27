@@ -5,12 +5,14 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.rinatvasilev.httpclient.App
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
 import java.lang.ref.WeakReference
+
 
 class CatListViewModel(val app: App, activityContext: WeakReference<Context>) : ViewModel() {
 
@@ -18,28 +20,27 @@ class CatListViewModel(val app: App, activityContext: WeakReference<Context>) : 
     var showProgress = mutableStateOf(false)
 
     fun getCats() {
-//        catList.clear()
-//        catList.addAll(arrayListOf(
-//            CatInfo(id = "595f280c557291a9750ebf80", arrayListOf("cute")),
-//            CatInfo(id = "595f280e557291a9750ebf9f", arrayListOf("cute")),
-//            CatInfo(id = "595f280e557291a9750ebfa6", arrayListOf("cute"))
-//        ))
+        showProgress.value = true
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
 
                 // we will not use layered architecture in this example for simplicity
                 app.catService?.getCuteCats(tags = "cute", limit = 10)?.let { response ->
+                    response.body?.let {
+                        val gson = Gson()
+                        val userListType = object : TypeToken<ArrayList<CatResponse>>() {}.type
+                        val catsResp: ArrayList<CatResponse> = gson.fromJson(String(it), userListType)
 
-                    //todo val json = JSONObject(response.responseJson)
-                    //todo use gson
-
-                    //val cats = app.catService?.getCuteCats(tags = "cute", limit = 10)
-
-                    withContext(Dispatchers.Main) {
-                        catList.clear()
-                        //todo catList.addAll(cats)
+                        withContext(Dispatchers.Main) {
+                            catList.clear()
+                            catList.addAll(catsResp.map { catResp -> catResp.toCatInfo() })
+                        }
                     }
+                }
+
+                withContext(Dispatchers.Main) {
+                    showProgress.value = false
                 }
             }
         }

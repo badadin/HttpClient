@@ -47,6 +47,7 @@ fun CatListScreen(
     }
 
     MainScreenUi(
+        showProgress = vm.showProgress.value,
         catList = vm.catList,
         onCatClicked = { navController.navigate(Screens.DETAILS.name) },
         isDarkTheme = isDarkTheme
@@ -55,6 +56,7 @@ fun CatListScreen(
 
 @Composable
 private fun MainScreenUi(
+    showProgress: Boolean,
     catList: List<CatInfo>,
     onCatClicked: (String) -> Unit,
     isDarkTheme: Boolean
@@ -69,11 +71,17 @@ private fun MainScreenUi(
                 isDarkTheme = isDarkTheme
             )
 
-            LazyColumn {
-                items(catList) {
-                    MainListItem(catInfo = it, onItemClicked = { id ->
-                        onCatClicked(id)
-                    })
+            if (showProgress) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                LazyColumn {
+                    items(catList) {
+                        MainListItem(catInfo = it, onItemClicked = { id ->
+                            onCatClicked(id)
+                        })
+                    }
                 }
             }
         }
@@ -94,6 +102,7 @@ private fun MainScreenUi(
 private fun LoginScreenPreview() {
     HttpClientTheme {
         MainScreenUi(
+            showProgress = false,
             catList = arrayListOf(),
             onCatClicked = {},
             isDarkTheme = isSystemInDarkTheme()
