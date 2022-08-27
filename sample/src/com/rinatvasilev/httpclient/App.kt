@@ -1,8 +1,6 @@
 package com.rinatvasilev.httpclient
 
 import android.app.Application
-import android.util.Log
-import org.json.JSONObject
 
 class App : Application() {
 
@@ -60,13 +58,13 @@ class App : Application() {
 
 interface CatService {
     @Post("cat/cute")
-    fun getRandomCuteCatWithPost(@Param("id") id: Long)
+    fun getRandomCuteCatWithPost(@Param("id") id: Long): HttpClientResponse
 
     @Get("cat/cute")
-    fun getRandomCuteCatWithGet(@Param("id") id: Long, @Param("name") name: String)
+    fun getRandomCuteCatWithGet(@Param("id") id: Long, @Param("name") name: String): HttpClientResponse
 
     @Get("cat/cute")
-    fun getRandomCuteCatWithGetNoParams()
+    fun getRandomCuteCatWithGetNoParams(): HttpClientResponse
 
     @Get("api/cats")
     fun getCuteCats(@Param("tags") tags: String, @Param("limit") limit: Int): HttpClientResponse

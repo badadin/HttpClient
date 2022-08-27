@@ -14,7 +14,7 @@ class BaseHttpClientImpl(private val baseUrl: String) : BaseHttpClient {
 
     private val httpClient = HttpClient()
 
-    override fun get(request: String, params: Map<String, Any>?): HttpResponse {
+    override fun get(request: String, params: Map<String, Any>?): HttpClientResponse {
         Log.d("HttpClient", "get: $request, params: $params")
 
         val paramList = Array<Array<String>>(params?.entries?.size ?: 0) { Array(2) { "" } }
@@ -32,10 +32,11 @@ class BaseHttpClientImpl(private val baseUrl: String) : BaseHttpClient {
         val queryURL = formQueryUrl(request, queryParams = paramList.map { it }.toTypedArray())
         val httpRequest = HttpRequest(queryURL, "GET")
         httpRequest.addHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
-        return httpClient.transmit(httpRequest)
+        val resp = httpClient.transmit(httpRequest)
+        return HttpClientResponse(code = resp.code, message = resp.message, headers = resp.headers, body = resp.body)
     }
 
-    override fun post(request: String, params: Map<String, Any>?): HttpResponse {
+    override fun post(request: String, params: Map<String, Any>?): HttpClientResponse {
         Log.d("HttpClient", "post: $request, params: $params")
 
         val jsonRequest = JSONObject()
@@ -50,7 +51,8 @@ class BaseHttpClientImpl(private val baseUrl: String) : BaseHttpClient {
         httpRequest.setBody(jsonRequest)
         httpRequest.addHeader("Content-Type", "application/json; charset=utf-8")
         httpRequest.addHeader("Content-Length", httpRequest.body.size.toString())
-        return httpClient.transmit(httpRequest)
+        val resp = httpClient.transmit(httpRequest)
+        return HttpClientResponse(code = resp.code, message = resp.message, headers = resp.headers, body = resp.body)
     }
 
     private fun formQueryUrl(requestPath: String, vararg queryParams: Array<String>) =

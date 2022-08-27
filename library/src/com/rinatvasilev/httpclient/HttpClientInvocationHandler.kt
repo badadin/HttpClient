@@ -10,30 +10,29 @@ class HttpClientInvocationHandler(private val clientImpl: BaseHttpClient) : Invo
     //  https://github.com/androidbroadcast/DynamicProxySample
 
     override fun invoke(proxy: Any, method: Method, args: Array<out Any>?): Any {
-        when (method.annotations.firstOrNull()) {
+        return when (method.annotations.firstOrNull()) {
             is Get -> invokeGet(method, args)
             is Post -> invokePost(method, args)
             else -> throw IllegalStateException("Unknown annotation")
         }
-        return Unit
     }
 
-    private fun invokeGet(method: Method, args: Array<out Any>?) {
+    private fun invokeGet(method: Method, args: Array<out Any>?): HttpClientResponse {
         if (BuildConfig.DEBUG) {
             checkGet(method)
         }
 
         val request = method.annotations.firstNotNullOf { it as? Get }.value
-        clientImpl.get(request, buildParams(method, args))
+        return clientImpl.get(request, buildParams(method, args))
     }
 
-    private fun invokePost(method: Method, args: Array<out Any>?) {
+    private fun invokePost(method: Method, args: Array<out Any>?): HttpClientResponse {
         if (BuildConfig.DEBUG) {
             checkPost(method)
         }
 
         val request = method.annotations.firstNotNullOf { it as? Post }.value
-        clientImpl.post(request, buildParams(method, args))
+        return clientImpl.post(request, buildParams(method, args))
     }
 
     private fun buildParams(method: Method, args: Array<out Any>?): Map<String, Any>? {
