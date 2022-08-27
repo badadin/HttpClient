@@ -10,10 +10,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import androidx.navigation.NavController
+import coil.compose.SubcomposeAsyncImage
 import com.rinatvasilev.httpclient.*
 import com.rinatvasilev.httpclient.R
 import com.rinatvasilev.httpclient.ui.*
@@ -21,6 +23,7 @@ import com.rinatvasilev.httpclient.ui.theme.*
 
 @Composable
 fun DetailsScreen(
+    id: String,
     app: App,
     navController: NavController,
     activityContext: Context,
@@ -29,6 +32,7 @@ fun DetailsScreen(
     //todo vm
 
     DetailsScreenUi(
+        id = id,
         onBackClicked = { navController.popBackStack() },
         isDarkTheme = isDarkTheme
     )
@@ -36,6 +40,7 @@ fun DetailsScreen(
 
 @Composable
 private fun DetailsScreenUi(
+    id: String,
     onBackClicked: () -> Unit,
     isDarkTheme: Boolean
 ) {
@@ -56,6 +61,16 @@ private fun DetailsScreenUi(
                 },
                 isDarkTheme = isDarkTheme
             )
+
+            SubcomposeAsyncImage(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxSize(),
+                model = "${App.BASE_URL}/cat?id=${id}",
+                loading = { CircularProgressIndicator() },
+                contentScale = ContentScale.Fit,
+                contentDescription = null
+            )
         }
     }
 }
@@ -74,6 +89,7 @@ private fun DetailsScreenUi(
 private fun LoginScreenPreview() {
     HttpClientTheme {
         DetailsScreenUi(
+            id = "",
             onBackClicked = {},
             isDarkTheme = isSystemInDarkTheme()
         )

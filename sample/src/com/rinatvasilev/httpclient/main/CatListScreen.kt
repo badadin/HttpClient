@@ -49,7 +49,7 @@ fun CatListScreen(
     MainScreenUi(
         showProgress = vm.showProgress.value,
         catList = vm.catList,
-        onCatClicked = { navController.navigate(Screens.DETAILS.name) },
+        onCatClicked = { id -> navController.navigate("${Screens.DETAILS.name}/$id") },
         isDarkTheme = isDarkTheme
     )
 }
@@ -78,7 +78,7 @@ private fun MainScreenUi(
             } else {
                 LazyColumn {
                     items(catList) {
-                        MainListItem(catInfo = it, onItemClicked = { id ->
+                        CatListItem(catInfo = it, onItemClicked = { id ->
                             onCatClicked(id)
                         })
                     }

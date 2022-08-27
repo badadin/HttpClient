@@ -15,10 +15,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.rinatvasilev.httpclient.details.DetailsScreen
 import com.rinatvasilev.httpclient.main.CatListScreen
 import com.rinatvasilev.httpclient.ui.theme.HttpClientTheme
@@ -59,12 +61,19 @@ private fun Navigation(app: App, activityContext: Context) {
                     )
                 }
 
-                composable(Screens.DETAILS.name) {
-                    DetailsScreen(
-                        app = app,
-                        navController = navController,
-                        activityContext = activityContext
-                    )
+                composable(
+                    route = "${Screens.DETAILS.name}/{id}",
+                    arguments = listOf(navArgument("id") { type = NavType.StringType })
+                ) { entry ->
+                    val id = entry.arguments?.getString("id")
+                    id?.let {
+                        DetailsScreen(
+                            id = it,
+                            app = app,
+                            navController = navController,
+                            activityContext = activityContext
+                        )
+                    }
                 }
             }
         }

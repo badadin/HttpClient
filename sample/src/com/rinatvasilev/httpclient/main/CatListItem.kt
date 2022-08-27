@@ -1,5 +1,6 @@
 package com.rinatvasilev.httpclient.main
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
@@ -22,7 +24,7 @@ import com.rinatvasilev.httpclient.App
 import com.rinatvasilev.httpclient.ui.theme.*
 
 @Composable
-fun MainListItem(
+fun CatListItem(
     catInfo: CatInfo,
     onItemClicked: (String) -> Unit,
     isDarkTheme: Boolean = isSystemInDarkTheme()
@@ -44,14 +46,14 @@ fun MainListItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         SubcomposeAsyncImage(
-            model = "${App.BASE_URL}/cat?id=${catInfo.id}",
-            loading = { CircularProgressIndicator() },
-            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .padding(start = 16.dp)
                 .width(100.dp)
                 .height(100.dp)
                 .clip(CircleShape),
+            model = "${App.BASE_URL}/cat?id=${catInfo.id}",
+            loading = { CircularProgressIndicator() },
+            contentScale = ContentScale.Crop,
             contentDescription = null
         )
 
@@ -73,5 +75,23 @@ fun MainListItem(
                 }
             }
         }
+    }
+}
+
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    showBackground = true,
+    name = "Light Mode"
+)
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    showBackground = true,
+    name = "Dark Mode"
+)
+@Composable
+private fun CatListItemPreview() {
+    HttpClientTheme {
+        val catInfo = CatInfo("", arrayListOf("Cat", "Cute"))
+        CatListItem(catInfo = catInfo, onItemClicked = {}, isDarkTheme = isSystemInDarkTheme())
     }
 }
